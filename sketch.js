@@ -12,7 +12,9 @@ var player
 
 var bullet, bulletImg;
 var onGround = true
-
+var moved = false
+var building
+var x = 10
 
 function preload(){
   
@@ -31,9 +33,9 @@ function setup() {
   
   createCanvas(400,400);
 
-  ground = new Ground(0,370,400,40)
+  ground = new Ground(200,height,400,20)
   
-  player = new Player(20,360,10,15)
+  player = new Player(20,365,10,15)
  
 }
 
@@ -44,13 +46,19 @@ function draw() {
 ground.display()
 player.display()
 
+if(ground.body.position.y - player.body.position.y <= 20){
+  moved = false
+}
+
 if(ground.body.position.y - player.body.position.y <= 50){
  onGround = true;
 }
 else{
   onGround = false;
 }
-
+if(building != null){
+building.display()
+}
 
 }
 
@@ -61,12 +69,21 @@ function keyPressed(){
     // Matter.Body.setVelocity(player.body,{x:0,y:-10})
     player.body.position.y -= 10
   }
-  if(keyCode ===37 ){
-    player.body.position.x -= 10
-    player.body.position.y -= 2
+  if(keyCode ===37 && !moved){
+    player.body.position.x -= 5
+    player.body.position.y -= 1
+    moved = true
   }
-  if(keyCode ===39 ){
-    player.body.position.x += 10
-    player.body.position.y -= 2
+  if(keyCode ===39 && !moved){
+    player.body.position.x += 5
+    player.body.position.y -= 1
+    moved = true
   }
+  if(keyCode === 32){
+    if(i=1,i++,i<x){
+    building[i] = new Ground(player.body.position.x +20,player.body.position.y,40,40)
+    
+    }
+  }
+
 }
