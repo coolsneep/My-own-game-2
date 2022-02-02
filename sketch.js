@@ -6,7 +6,7 @@ const World = Matter.World;
 const Bodies = Matter.Bodies;
  const Constraint = Matter.Constraint; 
 const Body = Matter.Body;
-
+counter = 1
 var ground
 var player
 var bullet, bulletImg;
@@ -23,7 +23,7 @@ var zigzag
 var block
 var powerup
 var powerupList = []
-var building2
+var building2 = null
 var placerGroup
 
 function preload(){
@@ -51,10 +51,11 @@ function setup() {
   
   player = createSprite(300,365,10,15)
   building = createSprite(100,300,50,100)
-  building.setCollider("rectangle", -25, 0, 20, 75);
+  building.setCollider("rectangle", -25,-5, 20, 55);
   building.debug = true
   building.addImage(threeTall)
   var placerGroup = Group()
+  
 }
 
 function draw() {
@@ -64,6 +65,7 @@ if(powerupList.includes(building)){
 }
 
  if(ground.y - player.y <= 20){
+  
  onGround = true;
 }
 else{
@@ -89,11 +91,28 @@ ellipse(130,40,40)
 ellipse(175,40,40)
 drawSprites();
 
-if(player.overlap(building)){
-  
+
+
+if(player.overlap(building)){ 
   powerupList.push(building)
 }
+if(counter==0){
+  player.collide(building2)
+  ground.collide(building2)
+  console.log(building2.position.y)
+  if(building2.position.y - player.y <= 70){
+    onGround = true;
+   }
+  else{
+     onGround = false;
+   }
+}
+if(counter == 1){
+if (building2 != null){ 
+building2.position.x = player.position.x-30
 
+}
+}
 }
 
 
@@ -103,12 +122,21 @@ function keyPressed(){
    player.velocity.y -= 10
   }
   if(keyCode === 49){
-    console.log(powerupList)
-    // fix height 
-    building2 = createSprite(player.position.x+30,player.position.y,powerupList[0].width,powerupList[0].height)
+    
+
+    building2 = createSprite(player.position.x-30,player.position.y-15,powerupList[0].width,powerupList[0].height)
+    building2.setCollider("rectangle", -25,-5, 20, 55);
     building2.addImage(threeTall)
-    placerGroup.add(building2)
+    
   }
+  if (building2 != null){ 
+  if(powerupList.length>0){
+  if(keyCode === 32){
+    counter = 0
+    powerupList.remove(powerup[0])
+  }
+  }
+}
 }
 
 
