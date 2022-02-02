@@ -15,6 +15,16 @@ var onGround = true
 var moved = false
 var building
 var x = 10
+var healthbackground
+
+
+var threeTall
+var smallL
+var zigzag
+var block
+var powerup
+var powerupList = []
+
 
 function preload(){
   
@@ -23,67 +33,84 @@ function preload(){
   // zombieImg = loadImage("assets/zombie.png")
   // bulletImg = loadImage("assets/bullet.png");
   // bgImg = loadImage("assets/bg.jpeg")
+  healthbackground = loadImage("assets/healthbarbackground.png")
 
+  // zigzag = loadImage()
+  // smallL = loadImage()
+  // block = loadImage()
+  threeTall = loadImage("assets/threeTall.png")
 }
 
 function setup() {
-  engine = Engine.create(); 
-  world = engine.world;
+
 
   
   createCanvas(400,400);
 
-  ground = new Ground(200,height,400,20)
+  ground = createSprite(200,height,400,20);
   
-  player = new Player(20,365,10,15)
+  player = createSprite(300,365,10,15)
  
+  powerup = new pickUp(200,300,40,70,threeTall,middle)
+
 }
 
 function draw() {
   background(0); 
-  Engine.update(engine)
-
-ground.display()
-player.display()
-
-if(ground.body.position.y - player.body.position.y <= 20){
-  moved = false
+if(!powerupList.includes(powerup)){
+ powerup.display()
 }
 
-if(ground.body.position.y - player.body.position.y <= 50){
+ if(ground.y - player.y <= 20){
  onGround = true;
 }
 else{
   onGround = false;
 }
-if(building != null){
-building.display()
+player.collide(ground)
+player.velocity.y +=0.5
+
+
+if (keyDown("A")){
+  player.position.x  -= 5
+  
+}
+if (keyDown("D")){
+  player.position.x  += 5
 }
 
+fill("white")
+image(healthbackground,-20,-50,250,200)
+ellipse(40,40,40)
+ellipse(85,40,40)
+ellipse(130,40,40)
+ellipse(175,40,40)
+drawSprites();
+
+if(player.collide(powerup.middle)){
+  powerup = tint(255, 127)
+  powerupList.push(powerup)
+  
+  
+}
 }
 
 
 function keyPressed(){
-  if(keyCode === 38 && onGround === true){
-    console.log("in")
-    // Matter.Body.setVelocity(player.body,{x:0,y:-10})
-    player.body.position.y -= 10
+  if(keyCode === 87 && onGround){
+   //jump height
+   player.velocity.y -= 10
   }
-  if(keyCode ===37 && !moved){
-    player.body.position.x -= 5
-    player.body.position.y -= 1
-    moved = true
-  }
-  if(keyCode ===39 && !moved){
-    player.body.position.x += 5
-    player.body.position.y -= 1
-    moved = true
-  }
-  if(keyCode === 32){
-    if(i=1,i++,i<x){
-    building[i] = new Ground(player.body.position.x +20,player.body.position.y,40,40)
-    
+}
+
+
+
+
+
+function stopMoving(){
+    while(player.velocity.x != 0){
+      player.velocity.x -= 1
     }
   }
 
-}
+
