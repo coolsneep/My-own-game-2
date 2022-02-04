@@ -7,6 +7,7 @@ const Bodies = Matter.Bodies;
  const Constraint = Matter.Constraint; 
 const Body = Matter.Body;
 counter = 1
+counter2 = 1
 var ground
 var player
 var bullet, bulletImg;
@@ -25,7 +26,15 @@ var powerup
 var powerupList = []
 var building2 = null
 var placerGroup
-
+var threeTallb,twoTall
+var buildingMade = 0
+var firstPos = 50
+var secondPos=85
+var thirdPos=130
+var fourthPos=175
+var club
+var club2=null
+var clubMade = 0
 function preload(){
   
   // shooterImg = loadImage("assets/shooter_2.png")
@@ -38,33 +47,45 @@ function preload(){
   // zigzag = loadImage()
   // smallL = loadImage()
   // block = loadImage()
-  threeTall = loadImage("assets/threeTall.png")
+  twoTall = loadImage("assets/twotall.png")
+  threeTallb = loadImage("assets/threeTall.png")
+  threeTall = loadImage("assets/threeTallB.png")
 }
 
 function setup() {
 
 
   
-  createCanvas(400,400);
+  createCanvas(windowWidth,windowHeight);
 
-  ground = createSprite(200,height,400,20);
+  ground = createSprite(width/2,height-30,width,20);
   
-  player = createSprite(300,365,10,15)
-  building = createSprite(100,300,50,100)
+  player = createSprite(300,height-50,20,30)
+  
+  building = createSprite(width/2,height-100,50,100)
   building.setCollider("rectangle", -25,-5, 20, 55);
-  building.debug = true
-  building.addImage(threeTall)
-  var placerGroup = Group()
+  building.addImage(threeTallb)
+  building.scale = .4
+  
+  club = createSprite(width/4, height-100,50,100)
+  club.setCollider("rectangle",-25,-5,20,55)
+  club.addImage(threeTallb)
+  club.scale = .4
   
 }
 
 function draw() {
+  
   background(0); 
 if(powerupList.includes(building)){
- building.destroy()
+ building.position.x = firstPos
+ building.position.y = 40
 }
-
- if(ground.y - player.y <= 20){
+if (powerupList.includes(club)){
+  club.position.x = secondPos
+  club.position.y = 40
+}
+ if(ground.y - player.y <= 60){
   
  onGround = true;
 }
@@ -72,15 +93,15 @@ else{
   onGround = false;
 }
 player.collide(ground)
-player.velocity.y +=0.5
+player.velocity.y +=3
 
 
 if (keyDown("A")){
-  player.position.x  -= 5
+  player.position.x  -= 10
   
 }
 if (keyDown("D")){
-  player.position.x  += 5
+  player.position.x  += 10
 }
 
 fill("white")
@@ -95,11 +116,11 @@ drawSprites();
 
 if(player.overlap(building)){ 
   powerupList.push(building)
+  buildingMade =1
 }
 if(counter==0){
   player.collide(building2)
   ground.collide(building2)
-  console.log(building2.position.y)
   if(building2.position.y - player.y <= 70){
     onGround = true;
    }
@@ -110,44 +131,98 @@ if(counter==0){
 if(counter == 1){
 if (building2 != null){ 
 building2.position.x = player.position.x-30
-
+}
+}
+//second building
+if(player.overlap(club)){
+  
+  powerupList.push(club)
+  console.log(powerupList)
+  clubMade = 1
+}
+if(counter2==0){
+  player.collide(club2)
+  ground.collide(club2)
+  if(club2.position.y - player.y <= 90){
+    onGround = true;
+   }
+  else{
+     onGround = false;
+   }
+}
+if(counter2 == 1){
+if (club2 != null){ 
+club2.position.x = player.position.x-140
 }
 }
 }
 
 
 function keyPressed(){
+  
   if(keyCode === 87 && onGround){
+    
    //jump height
-   player.velocity.y -= 10
+   player.velocity.y -= 40
+   
   }
-  if(keyCode === 49){
+  if(keyCode === 49 && onGround == true){
+    //press 1
     
+    if(buildingMade == 1){
+      buildingMade = 0
+      building2 = createSprite(player.position.x-30,player.position.y-40,powerupList[0].width,powerupList[0].height)
+      building2.setCollider("rectangle", -80,-130, 150, 370);
+      building2.addImage(threeTall)
+      
+      
+    }
+    if(clubMade == 1){
+      clubMade = 0
+      console.log(player.position.x)
+      
+      club2 = createSprite(player.position.x-140,player.position.y+80,powerupList[0].width,powerupList[0].height)
+      console.log(club2.position.x)
+      club2.setCollider("rectangle", 0,-90, 80, 100);
+      club2.debug= true;
+      club2.scale = 2
+      club2.addImage(twoTall)
+      
+    }
 
-    building2 = createSprite(player.position.x-30,player.position.y-15,powerupList[0].width,powerupList[0].height)
-    building2.setCollider("rectangle", -25,-5, 20, 55);
-    building2.addImage(threeTall)
-    
   }
+  //building
   if (building2 != null){ 
-  if(powerupList.length>0){
-  if(keyCode === 32){
-    counter = 0
-    powerupList.remove(powerup[0])
-  }
-  }
-}
-}
-
-
-
-
-
-
-function stopMoving(){
-    while(player.velocity.x != 0){
-      player.velocity.x -= 1
+    if(powerupList.length>0){
+    //press spacebar
+      if(keyCode === 32){
+        counter = 0
+        powerupList[0].destroy()
+        powerupList.remove(powerup[0])
+        
+      }
     }
   }
+  //club
+  if (club2 != null){ 
+    if(powerupList.length>0){
+    //press spacebar
+      
+      if(keyCode === 32){
+        
+        counter2 = 0
+        powerupList[0].destroy()
+        powerupList.remove(powerup[0])
+        
+      }
+    }
+  }
+}
+
+
+
+
+
+
 
 
