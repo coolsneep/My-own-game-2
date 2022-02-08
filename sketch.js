@@ -17,7 +17,7 @@ var building
 var x = 10
 var healthbackground
 var building
-
+var index = 0
 var threeTall
 var smallL
 var zigzag
@@ -28,10 +28,10 @@ var building2 = null
 var placerGroup
 var threeTallb,twoTall
 var buildingMade = 0
-var firstPos = 50
-var secondPos=85
-var thirdPos=130
-var fourthPos=175
+var Pos1 = 50
+var Pos2=85
+var Pos3=130
+var Pos4=175
 var club
 var club2=null
 var clubMade = 0
@@ -77,12 +77,19 @@ function setup() {
 function draw() {
   
   background(0); 
+  // console.log("Pos"+index)
+ 
 if(powerupList.includes(building)){
- building.position.x = firstPos
+ 
+ building.position.x = eval("Pos"+(powerupList.indexOf(building)+1))
+ 
  building.position.y = 40
+
 }
 if (powerupList.includes(club)){
-  club.position.x = secondPos
+  
+  club.position.x = eval("Pos"+(powerupList.indexOf(club)+1))
+  
   club.position.y = 40
 }
  if(ground.y - player.y <= 60){
@@ -93,6 +100,7 @@ else{
   onGround = false;
 }
 player.collide(ground)
+
 player.velocity.y +=3
 
 
@@ -116,17 +124,18 @@ drawSprites();
 
 if(player.overlap(building)){ 
   powerupList.push(building)
+  
   buildingMade =1
 }
 if(counter==0){
   player.collide(building2)
   ground.collide(building2)
-  if(building2.position.y - player.y <= 70){
+  
+  if(player.isTouching(building2)){
+    
     onGround = true;
    }
-  else{
-     onGround = false;
-   }
+ 
 }
 if(counter == 1){
 if (building2 != null){ 
@@ -137,18 +146,19 @@ building2.position.x = player.position.x-30
 if(player.overlap(club)){
   
   powerupList.push(club)
-  console.log(powerupList)
+  
   clubMade = 1
 }
 if(counter2==0){
-  player.collide(club2)
-  ground.collide(club2)
-  if(club2.position.y - player.y <= 90){
+  
+  
+  if(player.isTouching(club2)){
+    
     onGround = true;
    }
-  else{
-     onGround = false;
-   }
+  player.collide(club2)
+  ground.collide(club2)
+  
 }
 if(counter2 == 1){
 if (club2 != null){ 
@@ -172,47 +182,48 @@ function keyPressed(){
     if(buildingMade == 1){
       buildingMade = 0
       building2 = createSprite(player.position.x-30,player.position.y-40,powerupList[0].width,powerupList[0].height)
-      building2.setCollider("rectangle", -80,-130, 150, 370);
+      building2.setCollider("rectangle", -85,-140, 130, 350)
+      
       building2.addImage(threeTall)
       
       
     }
     if(clubMade == 1){
       clubMade = 0
-      console.log(player.position.x)
       
-      club2 = createSprite(player.position.x-140,player.position.y+80,powerupList[0].width,powerupList[0].height)
-      console.log(club2.position.x)
-      club2.setCollider("rectangle", 0,-90, 80, 100);
-      club2.debug= true;
-      club2.scale = 2
+      
+      club2 = createSprite(player.position.x-140,player.position.y-70,powerupList[0].width,powerupList[0].height)
+      club2.setCollider("rectangle", 15,-15, 115, 170);
+      club2.debug = true
+      
       club2.addImage(twoTall)
+      club2.scale = 1.2
       
     }
 
   }
   //building
-  if (building2 != null){ 
+  if (building2 != null && powerupList[0]==building){ 
     if(powerupList.length>0){
     //press spacebar
       if(keyCode === 32){
         counter = 0
         powerupList[0].destroy()
-        powerupList.remove(powerup[0])
+        
+        powerupList.pop(powerupList[0])
+        
         
       }
     }
   }
   //club
-  if (club2 != null){ 
+  if (club2 != null && powerupList[0]== club){ 
     if(powerupList.length>0){
     //press spacebar
-      
-      if(keyCode === 32){
-        
+      if(keyCode === 32){ 
         counter2 = 0
         powerupList[0].destroy()
-        powerupList.remove(powerup[0])
+        powerupList.pop(powerupList[0])
         
       }
     }
